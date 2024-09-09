@@ -2,9 +2,9 @@ import React ,{useEffect, useState} from 'react'
 import {Modal, FloatingLabel , Form  ,Button} from 'react-bootstrap'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { addCategoryAPI, getCategoryAPI, removeCategoryAPI } from '../services/allAPI';
+import { addCategoryAPI, getCategoryAPI, getSingleVideosAPI, removeCategoryAPI, removeVideoAPI, updateCategoryAPI } from '../services/allAPI';
 
-const Category = () => {
+const Category = ({setRemoveVideoResponseFromCategory}) => {
   const [allCategory,setAllCategory] = useState([])
   const [categoryName , setCategoryName] = useState("")  // store category in to json server 
 
@@ -40,6 +40,27 @@ const Category = () => {
     await removeCategoryAPI(categoryId)
     getAllCategory()
   }
+  const dragOverCategory = e=>{
+    e.preventDefault()
+  }
+  const videoDropped = async (e,categoryId)=>{
+    const videoId = e.dataTransfer.getData("vId")
+    console.log(`video id :${videoId} dropped inside category id : ${categoryId}`);
+    // add video to category
+    //get details of video added in the category
+    const {data} = await getSingleVideosAPI(videoId)
+    console.log(data);
+    let selectedCategory = allCategory?.find(item=>item.id==categoryId)
+    selectedCategory.allVideos.push(data)
+    console.log(selectedCategory);
+    //save updated category to json server using api call
+    await updateCategoryAPI(categoryId,selectedCategory)
+    const result = await removeVideoAPI(videoId)
+    setRemoveVideoResponseFromCategory(result)
+    getAllCategory()
+
+    
+  }
   return (
     <>
     <div className="d-flex justify-content-around">
@@ -53,7 +74,7 @@ const Category = () => {
            allCategory.length>0?
              allCategory?.map(categoryDetails=>(
 
-              <div className="border rounded p-3 mb-2">
+              <div droppable={true} onDragOver={e=>dragOverCategory(e)} onDrop={e=>videoDropped(e,categoryDetails?.id)} key={categoryDetails?.id} className="border rounded p-3 mb-2">
               <div className="d-flex justify-content-between">
                  <h5>{categoryDetails?.categoryName}</h5>
                  <button onClick={()=>removeCategory(categoryDetails?.id)} className='btn'> <i className='fa-solid fa-trash text-danger'></i> </button>

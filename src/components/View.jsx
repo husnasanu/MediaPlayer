@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { Row , Col} from 'react-bootstrap'
 import VideoCard from './VideoCard'
 import { getAllVideosAPI } from '../services/allAPI'
-const View = ({uploadVideoResponse}) => {
+const View = ({uploadVideoResponse,removeVideoResponseFromCategory}) => {
   const [deleteVideoResponse , setDeleteVideoResponse] = useState("")
   const[allVideos,setAllVideos] = useState([])
 
   useEffect(()=>{
     getAllVideos()
-  },[uploadVideoResponse , deleteVideoResponse])
+  },[uploadVideoResponse , deleteVideoResponse,removeVideoResponseFromCategory])
 
   //get all videos
   const getAllVideos = async ()=>{

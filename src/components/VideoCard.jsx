@@ -20,14 +20,18 @@ const VideoCard = ({displayData , setDeleteVideoResponse}) => {
   }
   const removeVideo = async(videoId)=>{
     await removeVideoAPI(videoId)
-  //pass response to view component (chid to parent)
+  //pass response to view component (child to parent)
    setDeleteVideoResponse(result?.data)
+  }
+  const videoDragStart = (e,videoId)=>{
+    console.log(`Dragging strarted with video id : ${videoId}`);
+    e.dataTransfer.setData("vId",videoId)
   }
 
   return (
     <>
 
-<Card >
+<Card draggable={true} onDragStart={e=>videoDragStart(e,displayData?.id)} style={{height:'250px'}} >
       <Card.Img onClick={handleShow} variant="top" style={{height:'150px'}} src={displayData?.url} />
       <Card.Body>
         <Card.Title className='d-flex align-items-center justify-content-between '>

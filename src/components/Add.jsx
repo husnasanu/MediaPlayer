@@ -45,7 +45,8 @@ console.log(videoDetails);
       if(result.status>=200 && result.status<=300){
         handleClose()
         setVideoDetails({caption:"",url:"",link:""})
-        toast.success(`${result.data.caption}  added to your collection!!! `)
+        // toast.success(`${result?.data?.caption}  added to your collection!!! `)  
+          
         setUploadVideoResponse(result)
       }
     }else{
