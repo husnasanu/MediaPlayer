@@ -9,8 +9,7 @@ const History = () => {
 
   useEffect(()=>{
     getHistory()
-  },[])
-
+  },[]) 
   const getHistory = async ()=>{
     const response = await getHistoryAPI()
     console.log(response);

@@ -52,3 +52,7 @@ export const getSingleVideosAPI = async (id)=>{
 export const updateCategoryAPI = async (categoryId,categoryDetails)=>{
     return await commonAPI("PUT",`${serverUrl}/categories/${categoryId}`,categoryDetails)
 }
+// get single cateory API  --------------  ((drag and drop))
+export const getSingleCategoryAPI = async (id)=>{
+    return await commonAPI("GET",`${serverUrl}/categories/${id}`,"")
+}

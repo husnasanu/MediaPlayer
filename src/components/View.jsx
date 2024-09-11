@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Row , Col} from 'react-bootstrap'
 import VideoCard from './VideoCard'
-import { getAllVideosAPI } from '../services/allAPI'
-const View = ({uploadVideoResponse,removeVideoResponseFromCategory}) => {
+import { getAllVideosAPI, getSingleCategoryAPI, uploadVideoAPI ,updateCategoryAPI } from '../services/allAPI'
+const View = ({uploadVideoResponse,removeVideoResponseFromCategory,setRemoveCategoryVideoResponseFromView}) => {
   const [deleteVideoResponse , setDeleteVideoResponse] = useState("")
   const[allVideos,setAllVideos] = useState([])
 
@@ -20,9 +20,32 @@ const View = ({uploadVideoResponse,removeVideoResponseFromCategory}) => {
   }
   console.log(allVideos);
   
+  const dragOverView = e=>{
+   e.preventDefault()
+  }
+  const videoDropFromCategory = async (e)=>{
+   const {categoryId,video} = JSON.parse(e.dataTransfer.getData("dataShare"))
+   console.log(`video dropped inside view component, with video id : ${video.id}  from category id : ${categoryId} `);
+   // delete video from category
+   const {data} = await getSingleCategoryAPI(categoryId)
+   console.log(data);
+   // update its allvideo after removing specefic video to be dragged
+   const updatedCategoryVideoList = data?.allVideos?.filter(item=>item.id!=video.id)
+   console.log(updatedCategoryVideoList);
+   const {id,categoryName} = data
+   // save the changes permenently by calling api
+   const result = await updateCategoryAPI(categoryId,{id,categoryName,allVideos:updatedCategoryVideoList})
+   //share response to category component
+   setRemoveCategoryVideoResponseFromView(result)
+   //add removed video to allVideos api
+   await uploadVideoAPI(video)
+   // display all video in view
+   getAllVideos()
+
+  }
   return (
     <>
-       <Row>
+       <Row droppable = "true" onDragOver={e=>dragOverView(e)} onDrop={e=>videoDropFromCategory(e)}  >
         {
           allVideos.length>0?
                allVideos?.map(video=>(
